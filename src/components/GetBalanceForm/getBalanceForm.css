@@ -1,0 +1,24 @@
+.get-balance-card .card-content {
+  padding: 40px 60px;
+}
+
+.get-balance-card .card-actions {
+  padding: 40px 60px;
+}
+
+.get-balance-card .text-field-label-container {
+  padding: 0 0 15px;
+}
+
+.get-balance-card .text-field {
+  min-width: 250px;
+}
+
+.get-balance-card .text-field-container {
+  padding: 0 0 20px;
+}
+
+.get-balance-card .card-button {
+  min-width: 250px;
+  padding: 10px 0;
+}
