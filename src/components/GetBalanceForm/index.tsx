@@ -1,3 +1,3 @@
-import { GetBalanceForm } from "components/GetBalanceForm/getBalanceForm";
+import { GetBalanceForm } from 'components/GetBalanceForm/getBalanceForm'
 
-export default GetBalanceForm;
+export default GetBalanceForm

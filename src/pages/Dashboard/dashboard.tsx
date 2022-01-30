@@ -1,14 +1,14 @@
-import "./dashboard.css";
+import './dashboard.css'
 
-import React from "react";
-import { Grid } from "@material-ui/core";
+import React from 'react'
+import { Grid } from '@material-ui/core'
 
-import HeaderBar from "components/HeaderBar";
-import { useCryptogetApi } from "hooks/useCryptogetAPI";
-import GetBalanceForm from "components/GetBalanceForm";
+import HeaderBar from 'components/HeaderBar'
+import { useCryptogetApi } from 'hooks/useCryptogetAPI'
+import GetBalanceForm from 'components/GetBalanceForm'
 
-export const Dashboard: React.FC = (_) => {
-  const { getBalanceFor } = useCryptogetApi();
+export const Dashboard: React.FC = _ => {
+  const { getBalanceFor } = useCryptogetApi()
 
   return (
     <>
@@ -17,5 +17,5 @@ export const Dashboard: React.FC = (_) => {
         <GetBalanceForm />
       </Grid>
     </>
-  );
-};
+  )
+}
