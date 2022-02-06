@@ -1,12 +1,14 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { ErrorMessageContext, SetErrorMessageContext } from 'contexts/ErrorContextProvider'
 import { LoadingContext, SetLoadingContext } from 'contexts/LoadingContextProvider'
 import { Cryptos, GetBalanceQueryParams } from 'models/Cryptoget'
 import { useContext } from 'react'
+import { Type } from 'typescript'
 import { getCryptogetApiEndpoint } from 'utils/env'
 
-export interface ResponseStructure {
+export interface ResponseStructure<Type> {
   isLoaded: boolean
-  data?: object | null
+  data?: Type | null
   hasError: boolean
   errorMessage: string
   status: number
@@ -16,19 +18,43 @@ export interface ResponseStructure {
 export const useCryptogetApi = () => {
   const isLoading = useContext(LoadingContext)
   const setIsLoading = useContext(SetLoadingContext)
+  const errorMessage = useContext(ErrorMessageContext)
+  const setErrorMessage = useContext(SetErrorMessageContext)
 
   const makeApiCall: <Type>(
     request: AxiosRequestConfig,
     timeout?: number
-  ) => Promise<AxiosResponse<Type, any>> = async (request: AxiosRequestConfig, timeout = 20000) => {
-    let response: AxiosResponse = undefined
+  ) => Promise<ResponseStructure<Type>> = async (request: AxiosRequestConfig, timeout = 20000) => {
+    let response: ResponseStructure<Type> = {
+      hasError: false,
+      data: null,
+      errorMessage: '',
+      isLoaded: false,
+      status: null,
+      url: '',
+    }
 
     try {
       setIsLoading(true)
-      const _useCryptogetApi: AxiosResponse = await axios(request)
-      response = _useCryptogetApi
+      const axiosResponse: AxiosResponse = await axios(request).catch((error: AxiosError) => {
+        console.error(error.message, error.response)
+        // Setting the error manually as external response obj does not have it
+        response.errorMessage = `${error.message}. Please contact Support for help.`
+        return error.response
+      })
+
+      response.url = axiosResponse?.request.responseURL
+      response.data = axiosResponse?.data
+      response.status = axiosResponse?.status
+      response.hasError = axiosResponse?.status > 202
+      response.isLoaded = true
+
+      if (response.hasError) {
+        setErrorMessage(response.errorMessage)
+      }
     } catch (e) {
       console.error(e)
+      setErrorMessage(response.errorMessage)
     } finally {
       setIsLoading(false)
       return response
@@ -60,5 +86,5 @@ export const useCryptogetApi = () => {
     return response.data
   }
 
-  return { getBalanceFor, getCryptoList, isLoading }
+  return { getBalanceFor, getCryptoList, isLoading, errorMessage }
 }

@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@material-ui/core'
 import HeaderBar from 'components/HeaderBar'
 import { AppContainer } from 'containers/AppContainer'
-import { LoadingContextProvider } from 'contexts/LoadingContextProvider'
 import Dashboard from 'pages/Dashboard'
 import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
@@ -15,12 +14,21 @@ const App: React.FC = _ => {
           path="/"
           element={
             <AppContainer>
-              <LoadingContextProvider>
-                <ThemeProvider theme={customTheme}>
-                  <HeaderBar />
-                  <Dashboard />
-                </ThemeProvider>
-              </LoadingContextProvider>
+              <ThemeProvider theme={customTheme}>
+                <HeaderBar />
+                <Dashboard />
+              </ThemeProvider>
+            </AppContainer>
+          }
+        />
+        <Route
+          path="/balance"
+          element={
+            <AppContainer>
+              <ThemeProvider theme={customTheme}>
+                <HeaderBar />
+                <Dashboard />
+              </ThemeProvider>
             </AppContainer>
           }
         />
