@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext } from 'react'
 
 type AppContainerProps = {
   children: React.ReactElement[] | React.ReactElement

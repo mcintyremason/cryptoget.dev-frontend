@@ -1,6 +1,3 @@
-import './getBalanceForm.css'
-
-import React from 'react'
 import {
   Button,
   Card,
@@ -10,18 +7,40 @@ import {
   FormGroup,
   FormLabel,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
+  NativeSelect,
   TextField,
   Typography,
 } from '@material-ui/core'
-import { useState } from 'react'
+import { useCryptogetApi } from 'hooks/useCryptogetAPI'
+import { Cryptos } from 'models/Cryptoget'
+import React, { ChangeEvent, useState } from 'react'
+import './getBalanceForm.css'
 
-type GetBalanceFormProps = {}
+type GetBalanceFormProps = {
+  cryptos: Cryptos
+  fetchGetBalances: (cryptoSymbol: string, holdings: number) => Promise<void>
+}
 
-export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({}) => {
-  const [cryptoSymbol, setcryptoSymbol] = useState('ETH')
+export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({ cryptos, fetchGetBalances }) => {
+  const { getBalanceFor } = useCryptogetApi()
+  const [cryptoSymbol, setCryptoSymbol] = useState('default')
+  const [holdings, setHoldings] = useState<number>(0)
+
+  const cryptoOptions = cryptos.map(crypto => (
+    <option value={crypto.symbol} key={crypto.symbol}>
+      {crypto.fullName}
+    </option>
+  ))
+
+  const handleCryptoOnChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setCryptoSymbol(event.target.value)
+  }
+
+  const handleHoldingsOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value) {
+      setHoldings(parseFloat(event.target.value))
+    }
+  }
 
   return (
     <Card elevation={5} className="get-balance-card">
@@ -34,24 +53,23 @@ export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({}) => {
       <CardActions className="card-actions">
         <Grid container justifyContent="center">
           <FormGroup>
-            <Grid container>
-              <Grid item xs={6}>
+            <Grid container justifyContent="space-between">
+              <Grid item xs={5}>
                 <Grid container>
                   <FormLabel component="legend" className="text-field-label-container">
                     Crypto Symbol
                   </FormLabel>
                 </Grid>
                 <Grid container className="text-field-label-container">
-                  <Select
-                    value={cryptoSymbol}
-                    label="Crypto Symbol"
-                    // onChange={handleChange}
-                  >
-                    <MenuItem value="ETH">ETH</MenuItem>
-                  </Select>
+                  <NativeSelect defaultValue={cryptoSymbol} onChange={handleCryptoOnChange}>
+                    <option value="default" disabled>
+                      Select Crypto
+                    </option>
+                    {cryptoOptions}
+                  </NativeSelect>
                 </Grid>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
                 <Grid container>
                   <FormLabel component="legend" className="text-field-label-container">
                     Holdings
@@ -59,10 +77,14 @@ export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({}) => {
                 </Grid>
                 <Grid container className="text-field-label-container">
                   <TextField
+                    type="number"
+                    inputProps={{
+                      min: '0',
+                      step: '0.000001',
+                    }}
                     variant="outlined"
-                    // value={holdings}
-                    // onChange={handleAddressChange}
-                    // onKeyUp={handleKeyPress}
+                    value={holdings}
+                    onChange={handleHoldingsOnChange}
                     color="primary"
                     className="text-field"
                   />
@@ -74,6 +96,7 @@ export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({}) => {
                 variant="contained"
                 color="primary"
                 // onClick={handleGetBalances}
+                onClick={() => fetchGetBalances(cryptoSymbol, holdings)}
                 className="card-button"
               >
                 Sumbit
