@@ -1,39 +1,42 @@
 import { ThemeProvider } from '@material-ui/core'
-import HeaderBar from 'components/HeaderBar'
 import { AppContainer } from 'containers/AppContainer'
+import Balances from 'pages/Balances'
 import Dashboard from 'pages/Dashboard'
 import React from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import customTheme from 'styles/customMuiTheme'
 
 const App: React.FC = _ => {
   return (
     <BrowserRouter>
-      <Routes>
+      <Switch>
         <Route
-          path="/"
-          element={
+          path="/home"
+          render={_ => (
             <AppContainer>
               <ThemeProvider theme={customTheme}>
-                <HeaderBar />
                 <Dashboard />
               </ThemeProvider>
             </AppContainer>
-          }
+          )}
         />
         <Route
-          path="/balance"
-          element={
+          path="/balances"
+          render={_ => (
             <AppContainer>
               <ThemeProvider theme={customTheme}>
-                <HeaderBar />
-                <Dashboard />
+                <Balances />
               </ThemeProvider>
             </AppContainer>
-          }
+          )}
         />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+        <Route
+          path="*"
+          render={_ => {
+            return <Redirect to="/home" />
+          }}
+        />
+      </Switch>
     </BrowserRouter>
   )
 }

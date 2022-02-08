@@ -11,18 +11,19 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
-import { useCryptogetApi } from 'hooks/useCryptogetAPI'
 import { Cryptos } from 'models/Cryptoget'
 import React, { ChangeEvent, useState } from 'react'
-import './getBalanceForm.css'
+import { useHistory } from 'react-router-dom'
+import { modifyHistory } from 'utils/historyUtils'
+import './holdingsForm.css'
 
-type GetBalanceFormProps = {
+type HoldingsFormProps = {
   cryptos: Cryptos
-  fetchGetBalances: (cryptoSymbol: string, holdings: number) => Promise<void>
+  // fetchGetBalances: (cryptoSymbol: string, holdings: number) => Promise<void>
 }
 
-export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({ cryptos, fetchGetBalances }) => {
-  const { getBalanceFor } = useCryptogetApi()
+export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
+  const history = useHistory()
   const [cryptoSymbol, setCryptoSymbol] = useState('default')
   const [holdings, setHoldings] = useState<number>(0)
 
@@ -40,6 +41,22 @@ export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({ cryptos, fetchGe
     if (event.target.value) {
       setHoldings(parseFloat(event.target.value))
     }
+  }
+
+  const handleOnSubmit = () => {
+    const cryptoBalancesRequest = {
+      [cryptoSymbol]: holdings.toString(),
+    }
+
+    modifyHistory(
+      history,
+      {
+        previousRequest: cryptoBalancesRequest,
+      },
+      cryptoBalancesRequest,
+      false,
+      '/balances'
+    )
   }
 
   return (
@@ -96,7 +113,7 @@ export const GetBalanceForm: React.FC<GetBalanceFormProps> = ({ cryptos, fetchGe
                 variant="contained"
                 color="primary"
                 // onClick={handleGetBalances}
-                onClick={() => fetchGetBalances(cryptoSymbol, holdings)}
+                onClick={() => handleOnSubmit()}
                 className="card-button"
               >
                 Sumbit

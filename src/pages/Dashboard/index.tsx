@@ -1,3 +1,3 @@
-import { Dashboard } from 'pages/Dashboard/dashboard'
+import { Dashboard } from './dashboard'
 
 export default Dashboard

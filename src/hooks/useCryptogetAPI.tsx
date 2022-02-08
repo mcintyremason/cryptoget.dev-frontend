@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ErrorMessageContext, SetErrorMessageContext } from 'contexts/ErrorContextProvider'
 import { LoadingContext, SetLoadingContext } from 'contexts/LoadingContextProvider'
-import { Cryptos, GetBalanceQueryParams } from 'models/Cryptoget'
+import { BalanceTotalsResponse, Cryptos, GetBalanceQueryParams } from 'models/Cryptoget'
 import { useContext } from 'react'
 import { Type } from 'typescript'
 import { getCryptogetApiEndpoint } from 'utils/env'
@@ -64,7 +64,7 @@ export const useCryptogetApi = () => {
   const getBalanceFor = async (cryptoHoldings: GetBalanceQueryParams) => {
     const baseUrl = getCryptogetApiEndpoint()
 
-    const response = await makeApiCall({
+    const response = await makeApiCall<BalanceTotalsResponse>({
       url: `${baseUrl}/crypto/balance-totals`,
       params: cryptoHoldings,
       method: 'get',
