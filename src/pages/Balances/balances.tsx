@@ -1,4 +1,17 @@
-import { Box, CircularProgress, Divider, Grid, Typography } from '@material-ui/core'
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
 import HeaderBar from 'components/HeaderBar'
 import { format } from 'currency-formatter'
 import { useCryptogetApi } from 'hooks/useCryptogetAPI'
@@ -38,6 +51,23 @@ export const Balances: React.FC<BalancesProps> = () => {
     )
   }
 
+  const cryptoBalanceRow = (index: number) => {
+    const cryptoSymbol = Object.keys(balances?.currencies)[index]
+
+    return (
+      <TableRow key={`${cryptoSymbol}-balance`}>
+        <TableCell component="th" scope="row">
+          <Typography variant="h6">{cryptoSymbol}</Typography>
+        </TableCell>
+        <TableCell align="right">
+          <Typography variant="h6">
+            {format(balances?.currencies[cryptoSymbol].total, { code: 'USD' })}
+          </Typography>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
   useEffect(() => {
     if (Object.keys(parsed)[0] && isEmpty(balances)) {
       fetchGetBalances(parsed)
@@ -45,22 +75,50 @@ export const Balances: React.FC<BalancesProps> = () => {
   }, [parsed])
 
   return (
-    <Box>
+    <Box className="balances-container">
       <HeaderBar />
       {isLoading ? (
         <CircularProgress />
       ) : (
-        <Grid container justifyContent="center" item xs={11}>
-          {balances?.currencies &&
-            Object.keys(balances?.currencies).map((_, index) => cryptoBalanceEntry(index))}
-          <Divider variant="middle" />
-          <Grid container justifyContent="center">
-            <Grid item xs={3}>
-              <Typography variant="h2">Total: </Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography variant="h2">{format(balances?.total, { code: 'USD' })}</Typography>
-            </Grid>
+        <Grid container justifyContent="center">
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            item
+            xs={10}
+            sm={7}
+            md={6}
+            lg={5}
+            className="balances-table-container"
+          >
+            {balances?.currencies && (
+              <>
+                <Toolbar disableGutters className="balance-table-toolbar">
+                  <Grid container justifyContent="space-between">
+                    <Typography variant="h4">Total:</Typography>
+                    <Typography variant="h4">{format(balances?.total, { code: 'USD' })}</Typography>
+                  </Grid>
+                </Toolbar>
+                <TableContainer component={Paper}>
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          <Typography variant="h6">Crypto Symbol</Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="h6">Balance</Typography>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {Object.keys(balances?.currencies).map((_, index) => cryptoBalanceRow(index))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </>
+            )}
           </Grid>
         </Grid>
       )}
