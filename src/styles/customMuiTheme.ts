@@ -6,7 +6,7 @@ let customTheme = createTheme({
   overrides: {
     MuiOutlinedInput: {
       input: {
-        padding: '5px 10px',
+        padding: '7px 7px',
       },
     },
   },

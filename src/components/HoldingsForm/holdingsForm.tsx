@@ -16,6 +16,7 @@ import AddCircleIcon from '@material-ui/icons/Add'
 import { Cryptos } from 'models/Cryptoget'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { isEmpty } from 'utils/baseUtils'
 import { modifyHistory } from 'utils/historyUtils'
 import './holdingsForm.css'
 
@@ -61,7 +62,7 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
       if (i === index) {
         return {
           symbol: cryptoEntries[index].symbol,
-          holdings: parseInt(event.target.value),
+          holdings: parseFloat(event.target.value),
         }
       }
       return entry
@@ -83,6 +84,7 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
       }))
 
     // localStorage.setItem('cryptos', JSON.stringify(cryptoBalancesRequest))
+    localStorage.setItem('cryptoEntries', JSON.stringify(cryptoEntries))
     modifyHistory(
       history,
       {
@@ -99,11 +101,10 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
   }
 
   useEffect(() => {
-    // const localStorageCryptos = JSON.parse(localStorage.getItem('cryptos'))
-    // if (localStorageCryptos && !isEmpty(cryptos)) {
-    //   setCryptoSymbol(Object.keys(localStorageCryptos)[0])
-    //   setHoldings(parseFloat(Object.values(localStorageCryptos)[0] as string))
-    // }
+    const localStorageCryptoEntries = JSON.parse(localStorage.getItem('cryptoEntries'))
+    if (localStorageCryptoEntries && !isEmpty(cryptos)) {
+      setCryptoEntries(localStorageCryptoEntries)
+    }
   }, [cryptos])
 
   const cryptoOptions = cryptos?.map(crypto => (
@@ -114,12 +115,14 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
 
   const cryptoEntry = (index: number) => (
     <Grid container justifyContent="space-between" key={`crypto-entry-${index}`}>
-      <Grid item xs={5}>
-        <Grid container>
-          <FormLabel component="legend" className="text-field-label-container">
-            Crypto Symbol
-          </FormLabel>
-        </Grid>
+      <Grid item xs={6} md={5}>
+        {index === 0 && (
+          <Grid container>
+            <FormLabel component="legend" className="text-field-label-container">
+              Crypto Symbol
+            </FormLabel>
+          </Grid>
+        )}
         <Grid container className="text-field-label-container">
           <NativeSelect
             value={cryptoEntries[index].symbol}
@@ -132,11 +135,13 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
           </NativeSelect>
         </Grid>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={5} md={5}>
         <Grid container>
-          <FormLabel component="legend" className="text-field-label-container">
-            Holdings
-          </FormLabel>
+          {index === 0 && (
+            <FormLabel component="legend" className="text-field-label-container">
+              Holdings
+            </FormLabel>
+          )}
         </Grid>
         <Grid container className="text-field-label-container">
           <TextField
@@ -160,7 +165,10 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
     <Card elevation={5} className="get-balance-card">
       <CardContent className="card-content">
         <Typography variant="h5" align="center">
-          Welcome! We're a one stop shop to help find the total value of all of your holdings
+          Welcome!
+        </Typography>
+        <Typography variant="h5" align="center">
+          We're a one stop shop to help find the total value of all of your holdings
         </Typography>
       </CardContent>
       <Divider />
