@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@material-ui/core'
 import { AppContainer } from 'containers/AppContainer'
 import Balances from 'pages/Balances'
-import Dashboard from 'pages/Dashboard'
+import Dashboard from 'pages/Home'
 import React from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import customTheme from 'styles/customMuiTheme'
@@ -10,16 +10,6 @@ const App: React.FC = _ => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route
-          path="/home"
-          render={_ => (
-            <AppContainer>
-              <ThemeProvider theme={customTheme}>
-                <Dashboard />
-              </ThemeProvider>
-            </AppContainer>
-          )}
-        />
         <Route
           path="/balances"
           render={_ => (
@@ -31,9 +21,19 @@ const App: React.FC = _ => {
           )}
         />
         <Route
-          path="*"
+          path="/"
+          render={_ => (
+            <AppContainer>
+              <ThemeProvider theme={customTheme}>
+                <Dashboard />
+              </ThemeProvider>
+            </AppContainer>
+          )}
+        />
+        <Route
+          path="/*"
           render={_ => {
-            return <Redirect to="/home" />
+            return <Redirect to="/" />
           }}
         />
       </Switch>

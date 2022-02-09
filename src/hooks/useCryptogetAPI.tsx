@@ -70,8 +70,6 @@ export const useCryptogetApi = () => {
       method: 'get',
     })
 
-    console.log(response.data)
-
     return response.data
   }
 

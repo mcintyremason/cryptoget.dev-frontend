@@ -4,9 +4,9 @@ import GetBalanceForm from 'components/HoldingsForm'
 import { useCryptogetApi } from 'hooks/useCryptogetAPI'
 import { Cryptos } from 'models/Cryptoget'
 import React, { useEffect, useState } from 'react'
-import './dashboard.css'
+import './home.css'
 
-export const Dashboard: React.FC = _ => {
+export const Home: React.FC = _ => {
   const { getCryptoList, isLoading } = useCryptogetApi()
   const [cryptos, setCryptos] = useState<Cryptos>([])
 
