@@ -1,5 +1,6 @@
 import { Box, CircularProgress, Divider, Grid, Typography } from '@material-ui/core'
 import HeaderBar from 'components/HeaderBar'
+import { format } from 'currency-formatter'
 import { useCryptogetApi } from 'hooks/useCryptogetAPI'
 import { useSearchParams } from 'hooks/useSearchParam'
 import { BalanceTotalsResponse, GetBalanceQueryParams } from 'models/Cryptoget'
@@ -29,7 +30,9 @@ export const Balances: React.FC<BalancesProps> = () => {
           <Typography variant="h2">{cryptoSymbol}:</Typography>
         </Grid>
         <Grid item xs={3}>
-          <Typography variant="h2">${balances?.currencies[cryptoSymbol].total}</Typography>
+          <Typography variant="h2">
+            {format(balances?.currencies[cryptoSymbol].total, { code: 'USD' })}
+          </Typography>
         </Grid>
       </Grid>
     )
@@ -56,7 +59,7 @@ export const Balances: React.FC<BalancesProps> = () => {
               <Typography variant="h2">Total: </Typography>
             </Grid>
             <Grid item xs={3}>
-              <Typography variant="h2">${balances?.total}</Typography>
+              <Typography variant="h2">{format(balances?.total, { code: 'USD' })}</Typography>
             </Grid>
           </Grid>
         </Grid>
