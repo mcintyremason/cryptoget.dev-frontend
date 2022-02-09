@@ -1,3 +1,3 @@
-import { HeaderBar } from 'components/HeaderBar/headerBar'
+import { HeaderBar } from './headerBar'
 
 export default HeaderBar
