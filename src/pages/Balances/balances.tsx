@@ -2,8 +2,9 @@ import { Box, CircularProgress, Divider, Grid, Typography } from '@material-ui/c
 import HeaderBar from 'components/HeaderBar'
 import { useCryptogetApi } from 'hooks/useCryptogetAPI'
 import { useSearchParams } from 'hooks/useSearchParam'
-import { BalanceTotalsResponse } from 'models/Cryptoget'
+import { BalanceTotalsResponse, GetBalanceQueryParams } from 'models/Cryptoget'
 import { useEffect, useState } from 'react'
+import { isEmpty } from 'utils/baseUtils'
 import './balances.css'
 
 type BalancesProps = {}
@@ -13,17 +14,30 @@ export const Balances: React.FC<BalancesProps> = () => {
   const { getBalanceFor, isLoading } = useCryptogetApi()
   const [balances, setBalances] = useState<BalanceTotalsResponse>(null)
 
-  const fetchGetBalances = async (cryptoSymbol: string, holdings: number) => {
-    const response = await getBalanceFor({
-      [cryptoSymbol]: holdings,
-    })
+  const fetchGetBalances = async (cryptos: GetBalanceQueryParams) => {
+    const response = await getBalanceFor(cryptos)
 
     setBalances(response)
   }
 
+  const cryptoBalanceEntry = (index: number) => {
+    const cryptoSymbol = Object.keys(balances?.currencies)[index]
+
+    return (
+      <Grid container justifyContent="center" key={`${cryptoSymbol}-balance`}>
+        <Grid item xs={3}>
+          <Typography variant="h2">{cryptoSymbol}:</Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Typography variant="h2">${balances?.currencies[cryptoSymbol].total}</Typography>
+        </Grid>
+      </Grid>
+    )
+  }
+
   useEffect(() => {
-    if (Object.keys(parsed)[0]) {
-      fetchGetBalances(Object.keys(parsed)[0], parseFloat(Object.values(parsed)[0] as string))
+    if (Object.keys(parsed)[0] && isEmpty(balances)) {
+      fetchGetBalances(parsed)
     }
   }, [parsed])
 
@@ -34,25 +48,15 @@ export const Balances: React.FC<BalancesProps> = () => {
         <CircularProgress />
       ) : (
         <Grid container justifyContent="center" item xs={11}>
-          <Grid container justifyContent="center">
-            <Grid item xs={3}>
-              <Typography variant="h2">
-                {balances?.currencies[Object.keys(parsed)[0]].symbol}:
-              </Typography>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography variant="h2">
-                {balances?.currencies[Object.keys(parsed)[0]].total}
-              </Typography>
-            </Grid>
-          </Grid>
+          {balances?.currencies &&
+            Object.keys(balances?.currencies).map((_, index) => cryptoBalanceEntry(index))}
           <Divider variant="middle" />
           <Grid container justifyContent="center">
             <Grid item xs={3}>
               <Typography variant="h2">Total: </Typography>
             </Grid>
             <Grid item xs={3}>
-              <Typography variant="h2">{balances?.total}</Typography>
+              <Typography variant="h2">${balances?.total}</Typography>
             </Grid>
           </Grid>
         </Grid>
