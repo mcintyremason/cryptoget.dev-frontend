@@ -17,7 +17,7 @@ import { format } from 'currency-formatter'
 import { useCryptogetApi } from 'hooks/useCryptogetAPI'
 import { useSearchParams } from 'hooks/useSearchParam'
 import { BalanceTotalsResponse, GetBalanceQueryParams } from 'models/Cryptoget'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { isEmpty } from 'utils/baseUtils'
 import './balances.css'
 
@@ -28,28 +28,14 @@ export const Balances: React.FC<BalancesProps> = () => {
   const { getBalanceFor, isLoading } = useCryptogetApi()
   const [balances, setBalances] = useState<BalanceTotalsResponse>(null)
 
-  const fetchGetBalances = async (cryptos: GetBalanceQueryParams) => {
-    const response = await getBalanceFor(cryptos)
+  const fetchGetBalances = useCallback(
+    async (cryptos: GetBalanceQueryParams) => {
+      const response = await getBalanceFor(cryptos)
 
-    setBalances(response)
-  }
-
-  const cryptoBalanceEntry = (index: number) => {
-    const cryptoSymbol = Object.keys(balances?.currencies)[index]
-
-    return (
-      <Grid container justifyContent="center" key={`${cryptoSymbol}-balance`}>
-        <Grid item xs={3}>
-          <Typography variant="h2">{cryptoSymbol}:</Typography>
-        </Grid>
-        <Grid item xs={3}>
-          <Typography variant="h2">
-            {format(balances?.currencies[cryptoSymbol].total, { code: 'USD' })}
-          </Typography>
-        </Grid>
-      </Grid>
-    )
-  }
+      setBalances(response)
+    },
+    [getBalanceFor]
+  )
 
   const cryptoBalanceRow = (index: number) => {
     const cryptoSymbol = Object.keys(balances?.currencies)[index]
@@ -72,13 +58,15 @@ export const Balances: React.FC<BalancesProps> = () => {
     if (Object.keys(parsed)[0] && isEmpty(balances)) {
       fetchGetBalances(parsed)
     }
-  }, [parsed])
+  }, [parsed, balances])
 
   return (
     <Box className="balances-container">
       <HeaderBar />
       {isLoading ? (
-        <CircularProgress />
+        <Grid container justifyContent="center" className="progress-container">
+          <CircularProgress />
+        </Grid>
       ) : (
         <Grid container justifyContent="center">
           <Grid
