@@ -30,7 +30,7 @@ export const useSearchParams = () => {
     // only reset state if there is a non empty value to use, otherwise
     // keep the state for the balances view
     // if (resetSearch(newParsed)) setSearch('')
-  }, [query])
+  }, [query, history.location])
 
   return { parsed, search, setSearch }
 }

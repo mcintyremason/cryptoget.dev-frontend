@@ -12,7 +12,8 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
-import AddCircleIcon from '@material-ui/icons/Add'
+import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined'
+import RemoveCircleOutlinedIcon from '@material-ui/icons/RemoveCircleOutlined'
 import { Cryptos } from 'models/Cryptoget'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -83,7 +84,6 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
         ...curr,
       }))
 
-    // localStorage.setItem('cryptos', JSON.stringify(cryptoBalancesRequest))
     localStorage.setItem('cryptoEntries', JSON.stringify(cryptoEntries))
     modifyHistory(
       history,
@@ -98,6 +98,19 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
 
   const handleAddCryptoOnClick = () => {
     setCryptoEntries([...cryptoEntries, DEFAULT_CRYPTO_ENTRY])
+  }
+
+  const handleRemoveCryptoOnClick = () => {
+    const updatedCryptoEntries = [...cryptoEntries]
+
+    if (cryptoEntries.length > 1) {
+      updatedCryptoEntries.pop()
+    } else {
+      updatedCryptoEntries.pop()
+      updatedCryptoEntries.push(DEFAULT_CRYPTO_ENTRY)
+    }
+
+    setCryptoEntries(updatedCryptoEntries)
   }
 
   useEffect(() => {
@@ -162,28 +175,44 @@ export const HoldingsForm: React.FC<HoldingsFormProps> = ({ cryptos }) => {
   )
 
   return (
-    <Card elevation={5} className="get-balance-card">
+    <Card elevation={5} className="holdings-form-container">
       <CardContent className="card-content">
-        <Typography variant="h5" align="center">
-          Welcome!
-        </Typography>
-        <Typography variant="h5" align="center">
-          We're a one stop shop to help find the total value of all of your holdings
-        </Typography>
+        <Grid container justifyContent="center">
+          <Grid item xs={12}>
+            <Typography variant="h5" align="center" gutterBottom>
+              Welcome!
+            </Typography>
+          </Grid>
+          <Grid item xs={11}>
+            <Typography variant="h5" align="center">
+              We're a one stop shop to help find the total value of all of your holdings
+            </Typography>
+          </Grid>
+        </Grid>
       </CardContent>
       <Divider />
       <CardActions className="card-actions">
         <Grid container justifyContent="center">
           <FormGroup>
             {cryptoEntries.map((_, i) => cryptoEntry(i))}
-            <Grid container justifyContent="center">
+            <Grid container justifyContent="flex-start" className="add-icon-container">
               <IconButton
                 color="primary"
                 aria-label="add crypto entry"
                 component="span"
                 onClick={handleAddCryptoOnClick}
+                className="add-icon"
               >
-                <AddCircleIcon />
+                <AddCircleOutlinedIcon />
+              </IconButton>
+              <IconButton
+                color="primary"
+                aria-label="add crypto entry"
+                component="span"
+                onClick={handleRemoveCryptoOnClick}
+                className="remove-icon"
+              >
+                <RemoveCircleOutlinedIcon />
               </IconButton>
             </Grid>
             <Grid container justifyContent="center" className="submit-container">
